@@ -8,10 +8,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 const usersRoute = require("./routes/users");
-
+const warehouseRoute = require("./routes/warehouse")
 
 //route
 app.use("/v1/users",usersRoute );
+app.use("/v1/warehouse", warehouseRoute)
 
 
 //listen
