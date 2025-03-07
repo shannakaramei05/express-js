@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const express = require('express');
+const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -8,24 +8,17 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 const usersRoute = require("./routes/users");
-const warehouseRoute = require("./routes/warehouse")
-<<<<<<< Updated upstream
-=======
-const consumerRoute = require("./routes/consumer")
+const warehouseRoute = require("./routes/warehouse");
+const consumerRoute = require("./routes/consumer");
 const itemsRoute = require("./routes/products");
->>>>>>> Stashed changes
 
 //route
-app.use("/v1/users",usersRoute );
-app.use("/v1/warehouse", warehouseRoute)
-<<<<<<< Updated upstream
-
-=======
-app.use("/v1/consumers", consumerRoute)
-app.use("/v1/products",itemsRoute)
->>>>>>> Stashed changes
+app.use("/v1/users", usersRoute);
+app.use("/v1/warehouse", warehouseRoute);
+app.use("/v1/consumers", consumerRoute);
+app.use("/v1/products", itemsRoute);
 
 //listen
 app.listen(PORT, () => {
-  console.log(`SERVER RUNNING ON PORT ${PORT}`)
-})
+  console.log(`SERVER RUNNING ON PORT ${PORT}`);
+});
