@@ -43,7 +43,7 @@ router.patch("/:id", async (req,res) => {
     //Check the is user or admin 
     const [adminResult] = await db.query("SELECT * FROM TBL_USERS WHERE id = ?" , [adminId]);
 
-    if(adminResult.length > 0  && adminResult[0].ROLE != "ADMIN") {
+    if(adminResult.length > 0  && adminResult[0].role !== "ADMIN") {
         return res.status(403).json(errorResponse(403, "You dont have authorize for this!"))
     }
 
@@ -83,6 +83,31 @@ router.patch("/:id", async (req,res) => {
     logger.error(error)
     res.status(500).json(errorResponse(500, "Database error"));
    }
+})
+
+
+//verify consumer
+router.post("/verify" , async (req,res) => {
+    try {
+        const {adminId, companyId,verify} = req.body;
+
+        const [admin] = await db.query("SELECT * FROM TBL_USERS WHERE id = ?" , [adminId]);
+
+        logger.info(`Admin --> [${JSON.stringify(admin,null,2)}]`)
+
+        if(admin.length > 0 && admin[0].ROLE !== 'ADMIN') {
+            return res.status(403).json(errorResponse(403, "you have no authorize for doing this."))
+        }
+
+        const sql = "UPDATE TBL_CONSUMERS SET IS_VERIFY = ? WHERE id = ?";
+        const values=  [verify,companyId]
+
+        const [verifyConsumer] = await  db.query(sql,values);
+        res.status(201).json(successResponse(201, verifyConsumer))
+    }catch (e) {
+        logger.error(e)
+        res.status(500).json(errorResponse(500, "Database Error"))
+    }
 })
 
 module.exports = router;
