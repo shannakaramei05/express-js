@@ -77,6 +77,29 @@ CREATE TABLE CONSUMER_REQUEST(
 );
 
 
+
+ALTER TABLE TBL_WAREHOUSE
+DROP COLUMN QUANTITY,
+    DROP COLUMN MIN_STOCK
+;
+
+CREATE TABLE TBL_ITEMS (
+                           ID INTEGER PRIMARY KEY auto_increment,
+                           NAME VARCHAR(255) NOT NULL,
+                           PRICE DECIMAL(10, 2) NOT NULL,
+                           CATEGORY VARCHAR(255) NOT NULL,
+                           QUANTITY DECIMAL(10, 2) NOT NULL,
+                           WR_ID INTEGER NOT NULL,
+                           REGISTERED_BY VARCHAR(255) NOT NULL,
+                           UPDATED_BY VARCHAR(255) NOT NULL,
+                           UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           foreign key (WR_ID) references TBL_WAREHOUSE(ID) ON DELETE CASCADE
+);
+
+
+alter TABLE TBL_items modify QUANTITY decimal(10,2) default 0;
+
 SHOW TABLES;
 
 SELECT * FROM TBL_INV_MOVEMENT;
