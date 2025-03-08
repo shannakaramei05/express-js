@@ -23,5 +23,15 @@ async function isUserAdmin (userId) {
     }
 }
 
+async function isUserManager (userId) {
+    try {
+        const [rows] = await db.query(sql, [userId]);
+        return rows.length > 0 && rows[0].ROLE === "MANAGER";
+    } catch (err) {
+        console.error('Error checking user admin status:', err.message);
+        throw err;
+    }
+}
 
-module.exports = {getUserById, isUserAdmin}
+
+module.exports = {getUserById, isUserAdmin, isUserManager}

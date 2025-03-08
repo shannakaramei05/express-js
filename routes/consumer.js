@@ -67,13 +67,42 @@ router.post("/update", async (req,res) => {
 
 
 router.post("/create-request", async (req,res) => {
+    const connection = await db.getConnection(); // Get a transaction-safe connection
     try{
-        const {productId, quantity, consumerId, adrr} = req.body;
-        const sql = 'INSERT INTO TBL_CONSUMER_REQUEST (PRODUCT)'
 
+        const {productCd,quantity, consumerId} = req.body;
+        //checking user
+        const [user] = await db.query("SELECT * FROM TBL_CONSUMERS WHERE id = ? ", [consumerId]);
+        logger.info("test : " + user)
+
+        if(user.length === 0) {
+            return res.status(404).json(successResponse(404, "consumer not found"));
+        }
+
+        const requestItem = productCd.map((id, index) => [id, quantity[index], consumerId]);
+        logger.info("--------> " + requestItem)
+
+        // Begin transaction
+        await connection.beginTransaction();
+
+        const sql = `INSERT INTO TBL_CONSUMER_REQUEST (PRODUCT_CD, QUANTITY, REQUESTED_BY) VALUES ?`;
+        const [result] = await db.query(sql,[requestItem])
+
+        const consumerRequest = 'SELECT COUNT(*) AS count from TBL_CONSUMER_REQUEST WHERE REQUESTED_BY = ? AND STATUS = "PENDING"';
+
+        const reqId = [consumerId];
+
+        const [[{ count }]] = await db.query(consumerRequest, reqId);
+        logger.info(count)
+        // Commit transaction
+        await connection.commit();
+        res.status(200).json(successResponse(200,`succes create request [${count}]`))
     }catch (e) {
+        await connection.rollback(); // Rollback everything if any error occurs
         logger.error(e)
-        res.status(500).json(500,"Database Error")
+        res.status(500).json(errorResponse(500,"Database Error"))
+    }finally {
+        connection.release(); // Ensure connection is released
     }
 })
 

@@ -17,5 +17,14 @@ async function isProductExist(id) {
     }
 }
 
+async function createShipmentRequest(consumerRequestId){
+    try{
+        const [rows] = await db.query('SELECT * FROM TBL_CONSUMER_REQUEST WHERE id =  ?' , [consumerRequestId])
+        return rows[0];
+    }catch (e) {
+        logger.error(e)
+        throw e
+    }
+}
 
-module.exports = {isProductExist}
+module.exports = {isProductExist, createShipmentRequest}
