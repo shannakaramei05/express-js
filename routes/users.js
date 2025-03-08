@@ -7,6 +7,9 @@ const logger = require("../logger");
 const { successResponse, errorResponse } = require("../responseHelper");
 const { getUserById, isUserAdmin , isUserManager} = require("../services/user-services");
 const {createShipmentRequest} = require("../services/inventory-services")
+
+const {getConsumerRequest} = require("../services/pagination-services")
+
 //create user
 router.post("/", async (req, res) => {
   try {
@@ -210,6 +213,28 @@ router.post("/request/approve", async (req,res) => {
   }catch (e) {
     logger.error(e)
     res.status(500).json(errorResponse(500,"Invalid Request"))
+  }
+})
+
+
+router.get("/consumers/list-request" , async (req,res) => {
+  try{
+    let {page,size,status} = req.query;
+    page= parseInt(page)||1;
+    size= parseInt(size) ||5;
+
+    console.log("--status-- : " + status)
+    if (page < 1 || size < 1) {
+      return res.status(404).json(errorResponse(404, "Invalid pagination values"));
+    }
+
+    const result= await getConsumerRequest(page,size, status)
+
+    res.status(200).json(result)
+
+  }catch (e){
+    logger.error(e)
+    throw e;
   }
 })
 

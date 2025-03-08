@@ -27,4 +27,5 @@ async function createShipmentRequest(consumerRequestId){
     }
 }
 
+
 module.exports = {isProductExist, createShipmentRequest}
