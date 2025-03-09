@@ -4,8 +4,11 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const cors = require('cors')
+
 // middleware (using json body)
 app.use(express.json());
+app.use(cors())
 
 const usersRoute = require("./routes/users");
 const warehouseRoute = require("./routes/warehouse");
